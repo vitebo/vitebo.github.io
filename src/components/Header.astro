@@ -1,0 +1,35 @@
+---
+import Container from '@components/Container.astro';
+import Link from '@components/Link.astro';
+import { SITE } from '@consts';
+import {
+  getLangFromUrl,
+  useTranslatedPath,
+  useTranslations,
+} from '@i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(lang, Astro.url);
+const t = useTranslations(lang);
+
+const blogURL = translatePath('/blog');
+const homeURL = translatePath('/');
+---
+
+<header>
+  <Container>
+    <div class='flex flex-wrap gap-y-2 justify-between'>
+      <Link
+        href={homeURL}
+        underline={false}
+      >
+        <div class='font-semibold'>
+          {SITE.NAME}
+        </div>
+      </Link>
+      <nav class='flex gap-1'>
+        <Link href={blogURL}>{t('nav.blog')}</Link>
+      </nav>
+    </div>
+  </Container>
+</header>

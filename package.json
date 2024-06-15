@@ -1,0 +1,48 @@
+{
+  "name": "vitebo",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "dev:network": "astro dev --host",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "preview:network": "astro preview --host",
+    "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "pnpm eslint && pnpm markdownlint",
+    "eslint": "eslint .",
+    "markdownlint": "markdownlint '**/*.md' --ignore node_modules",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.7.0",
+    "@astrojs/markdown-remark": "^5.1.0",
+    "@astrojs/mdx": "^2.3.1",
+    "@astrojs/rss": "^4.0.6",
+    "@astrojs/tailwind": "^5.1.0",
+    "@fontsource/inter": "^5.0.18",
+    "@fontsource/lora": "^5.0.17",
+    "@tailwindcss/typography": "^0.5.13",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "astro": "^4.10.2",
+    "clsx": "^2.1.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^0.32.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "remark-toc": "^9.0.0",
+    "sharp": "^0.33.4",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@8.15.7+sha512.c85cd21b6da10332156b1ca2aa79c0a61ee7ad2eb0453b88ab299289e9e8ca93e6091232b25c07cbf61f6df77128d9c849e5c9ac6e44854dbd211c49f3a67adc",
+  "devDependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "markdownlint": "^0.34.0",
+    "markdownlint-cli": "^0.41.0",
+    "prettier": "3.3.2",
+    "prettier-plugin-astro": "^0.14.0"
+  }
+}

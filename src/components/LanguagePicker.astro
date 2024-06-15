@@ -1,0 +1,35 @@
+---
+import {
+  getLangFromUrl,
+  useTranslations,
+  KeyTranslation,
+  useTranslatedPath,
+} from '@i18n/utils';
+import { languages } from '@i18n/ui';
+import { Astro } from 'astro/env';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang, Astro.url);
+
+const languageReplacer = new RegExp(`(${languages.join('|')})`);
+const languageItems = languages
+  .map((key) => {
+    return {
+      lang: key,
+      label: t(`langugae-picker.${key}` as KeyTranslation),
+      href: translatePath(Astro.url.pathname, key),
+    };
+  })
+  .filter((item) => item.lang !== lang);
+---
+
+<ul>
+  {
+    languageItems.map(({ label, href }) => (
+      <li>
+        <a href={href}>{label}</a>
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,95 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import PageLayout from '@layouts/PageLayout.astro';
+import Container from '@components/Container.astro';
+import ArrowCard from '@components/ArrowCard.astro';
+import {
+  getLangFromUrl,
+  useTranslatedPath,
+  useLocalceStaticPaths,
+  useTranslations,
+} from '@i18n/utils';
+import { languages } from '@i18n/ui';
+
+export function getStaticPaths() {
+  return languages.map((locale) => {
+    return {
+      params: {
+        locale: useLocalceStaticPaths(locale),
+      },
+    };
+  });
+}
+
+type BlogTypeWithUrl = CollectionEntry<'blog'> & { data: { url: string } };
+
+const lang = getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(lang, Astro.url);
+const t = useTranslations(lang);
+
+const data = (
+  await getCollection('blog', (post) => {
+    if (post.data.draft) {
+      return false;
+    }
+    const [postLang] = post.slug.split('/');
+    return postLang === lang;
+  })
+)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map((post) => {
+    const [lang, ...slug] = post.slug.split('/');
+    return {
+      ...post,
+      data: {
+        ...post.data,
+        url: translatePath(`/${post.collection}/${slug.join('/')}`),
+      },
+    } as BlogTypeWithUrl;
+  });
+type Acc = {
+  [year: string]: BlogTypeWithUrl[];
+};
+const posts = data.reduce((acc: Acc, post) => {
+  const year = post.data.date.getFullYear().toString();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {});
+const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a));
+---
+
+<PageLayout
+  title={t('blog.meta.title')}
+  description={t('blog.meta.description')}
+>
+  <Container>
+    <div class='space-y-10'>
+      <h1 class='animate font-semibold text-black dark:text-white'>Blog</h1>
+      <div class='space-y-4'>
+        {
+          years.map((year) => (
+            <section class='animate space-y-4'>
+              <div class='font-semibold text-black dark:text-white'>{year}</div>
+              <div>
+                <ul class='flex flex-col gap-4'>
+                  {posts[year].map((post) => (
+                    <li>
+                      <ArrowCard
+                        title={post.data.title}
+                        description={post.data.description}
+                        url={post.data.url}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</PageLayout>

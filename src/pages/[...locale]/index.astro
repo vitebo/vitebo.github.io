@@ -1,0 +1,135 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import Container from '@components/Container.astro';
+import PageLayout from '@layouts/PageLayout.astro';
+import ArrowCard from '@components/ArrowCard.astro';
+import Link from '@components/Link.astro';
+import { SITE, SOCIALS } from '@consts';
+import {
+  getLangFromUrl,
+  useTranslatedPath,
+  useLocalceStaticPaths,
+  useTranslations,
+} from '@i18n/utils';
+import { languages } from '@i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const translatePath = useTranslatedPath(lang, Astro.url);
+const t = useTranslations(lang);
+
+type BlogTypeWithUrl = CollectionEntry<'blog'> & { data: { url: string } };
+
+const { locale } = Astro.params;
+
+const blog = (
+  await getCollection('blog', (post) => {
+    if (post.data.draft) {
+      return false;
+    }
+    const [postLang] = post.slug.split('/');
+    return postLang === lang;
+  })
+)
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
+  .map((post) => {
+    const [lang, ...slug] = post.slug.split('/');
+    return {
+      ...post,
+      data: {
+        ...post.data,
+        url: translatePath(`/${post.collection}/${slug.join('/')}`),
+      },
+    } as BlogTypeWithUrl;
+  });
+
+export function getStaticPaths() {
+  return languages.map((locale) => {
+    return {
+      params: {
+        locale: useLocalceStaticPaths(locale),
+      },
+    };
+  });
+}
+
+const blogURL = translatePath('/blog');
+---
+
+<PageLayout
+  title={t('blog.meta.title')}
+  description={t('blog.meta.description')}
+>
+  <Container>
+    <h1 class='animate font-semibold text-black dark:text-white'>
+      {t('home.title')}
+      <span class='text-xl'>👋🏻</span>
+    </h1>
+    <div class='space-y-16'>
+      <section>
+        <article class='space-y-4'>
+          <p class='animate'>
+            {t('home.welcome')}
+          </p>
+        </article>
+      </section>
+
+      <section class='animate space-y-6'>
+        <div class='flex flex-wrap gap-y-2 items-center justify-between'>
+          <h2 class='font-semibold text-black dark:text-white'
+            >{t('home.latest-posts')}</h2
+          >
+          <Link href={blogURL}>{t('home.see-all-posts')}</Link>
+        </div>
+        <ul class='flex flex-col gap-4'>
+          {
+            blog.map((post) => (
+              <li>
+                <ArrowCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  url={post.data.url}
+                />
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class='animate space-y-4'>
+        <h2 class='font-semibold text-black dark:text-white'
+          >{t('home.contact-me-title')}</h2
+        >
+        <article>
+          <p>{t('home.contact-me-description')}</p>
+        </article>
+        <ul class='flex flex-wrap gap-2'>
+          {
+            SOCIALS.map((SOCIAL) => (
+              <li class='flex gap-x-2 text-nowrap'>
+                <Link
+                  href={SOCIAL.HREF}
+                  external
+                  aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}
+                >
+                  {SOCIAL.NAME}
+                </Link>
+                {'/'}
+              </li>
+            ))
+          }
+          <li class='line-clamp-1'>
+            <Link
+              href={`mailto:${SITE.EMAIL}`}
+              aria-label={`Email ${SITE.NAME}`}
+            >
+              {SITE.EMAIL}
+            </Link>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </Container>
+</PageLayout>
