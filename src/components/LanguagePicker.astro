@@ -2,17 +2,15 @@
 import {
   getLangFromUrl,
   useTranslations,
-  KeyTranslation,
+  type KeyTranslation,
   useTranslatedPath,
 } from '@i18n/utils';
 import { languages } from '@i18n/ui';
-import { Astro } from 'astro/env';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang, Astro.url);
 
-const languageReplacer = new RegExp(`(${languages.join('|')})`);
 const languageItems = languages
   .map((key) => {
     return {

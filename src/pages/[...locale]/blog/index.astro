@@ -38,7 +38,7 @@ const data = (
 )
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .map((post) => {
-    const [lang, ...slug] = post.slug.split('/');
+    const [, ...slug] = post.slug.split('/');
     return {
       ...post,
       data: {

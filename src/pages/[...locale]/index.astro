@@ -20,8 +20,6 @@ const t = useTranslations(lang);
 
 type BlogTypeWithUrl = CollectionEntry<'blog'> & { data: { url: string } };
 
-const { locale } = Astro.params;
-
 const blog = (
   await getCollection('blog', (post) => {
     if (post.data.draft) {
@@ -35,7 +33,7 @@ const blog = (
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
   .map((post) => {
-    const [lang, ...slug] = post.slug.split('/');
+    const [, ...slug] = post.slug.split('/');
     return {
       ...post,
       data: {
