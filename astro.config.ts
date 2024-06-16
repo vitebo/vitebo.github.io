@@ -5,7 +5,8 @@ import remarkToc from 'remark-toc';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 
 export default defineConfig({
-  site: 'https://github.com/vitebo',
+  site: 'https://vitebo.github.io',
+  base: 'vitebo.github.io',
   trailingSlash: "never",
   integrations: [
     mdx(),
