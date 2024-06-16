@@ -6,7 +6,6 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 
 export default defineConfig({
   site: 'https://vitebo.github.io',
-  base: 'vitebo.github.io',
   trailingSlash: "never",
   integrations: [
     mdx(),
